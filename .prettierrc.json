@@ -1,0 +1,5 @@
+{
+  "printWidth": 100,
+  "tabWidth": 2,
+  "plugins": ["./web/node_modules/prettier-plugin-java/dist/index.mjs"]
+}

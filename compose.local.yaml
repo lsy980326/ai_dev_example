@@ -1,0 +1,14 @@
+services:
+  identity:
+    # Preserve older local identity data while importing the corrected teaching realm.
+    volumes:
+      - ./infra/local/study-realm.json:/opt/keycloak/data/import/study-realm.json:ro
+      - identity-data-v2:/opt/keycloak/data
+    ports: [127.0.0.1:18080:8080]
+  api:
+    ports: [127.0.0.1:18081:8080]
+  web:
+    ports: [127.0.0.1:3000:3000]
+
+volumes:
+  identity-data-v2:

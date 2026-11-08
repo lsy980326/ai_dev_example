@@ -1,0 +1,28 @@
+spring:
+  application:
+    name: study-api
+  datasource:
+    url: ${DATABASE_URL}
+    username: ${DATABASE_USER}
+    password: ${DATABASE_PASSWORD}
+  flyway:
+    enabled: false
+  jackson:
+    deserialization:
+      fail-on-unknown-properties: true
+server:
+  port: 8080
+  shutdown: graceful
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
+  endpoint:
+    health:
+      show-details: never
+app:
+  security:
+    issuer: ${OIDC_ISSUER}
+    jwk-set-uri: ${OIDC_JWKS_URI}
+    audience: study-api

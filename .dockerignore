@@ -1,0 +1,9 @@
+.git
+.local
+**/node_modules
+**/.next
+**/build
+**/.gradle
+docs/presentation
+*.env
+**/.DS_Store

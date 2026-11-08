@@ -1,0 +1,69 @@
+#!/usr/bin/env bash
+set -euo pipefail
+STUDY_ROOT="$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)"
+cd "$STUDY_ROOT"
+export BUILDX_CONFIG="$STUDY_ROOT/.local/buildx"
+mkdir -p "$BUILDX_CONFIG"
+export STUDY_PROJECT_NAME="study-$(printf '%s' "$STUDY_ROOT" | cksum | awk '{print $1}')"
+export STUDY_UID="$(id -u)" STUDY_GID="$(id -g)"
+need_docker(){ command -v docker >/dev/null || { echo 'Docker Desktop 또는 Docker Engine + Compose가 필요합니다.' >&2; exit 1; }; docker info >/dev/null 2>&1 || { echo 'Docker를 시작한 뒤 다시 실행해 주세요.' >&2; exit 1; }; }
+init(){ need_docker; if [ ! -f .local/runtime.env ]; then docker run --rm --user "$STUDY_UID:$STUDY_GID" -v "$STUDY_ROOT:/workspace" -w /workspace node:24.22.2-bookworm-slim node scripts/init-local.mjs; fi; }
+compose(){ docker compose -p "$STUDY_PROJECT_NAME" --env-file .local/runtime.env -f compose.yaml "$@"; }
+local_compose(){ docker compose -p "$STUDY_PROJECT_NAME" --env-file .local/runtime.env -f compose.yaml -f compose.local.yaml "$@"; }
+tools(){
+  init
+  export STUDY_DOCKER_GID="$(docker run --rm -v /var/run/docker.sock:/var/run/docker.sock node:24.22.2-bookworm-slim node -e 'process.stdout.write(String(require("node:fs").statSync("/var/run/docker.sock").gid))')"
+  compose --profile checks run --build --rm tools "$@"
+}
+node_task(){
+  if command -v node >/dev/null 2>&1; then node "$@"; else
+    need_docker
+    docker run --rm -i --user "$STUDY_UID:$STUDY_GID" -e STUDY_SOURCE_CHANGED="${STUDY_SOURCE_CHANGED:-}" -v "$STUDY_ROOT:/workspace" -w /workspace node:24.22.2-bookworm-slim node "$@"
+  fi
+}
+terraform_task(){ need_docker; docker run --rm -i -v "$STUDY_ROOT/infra/aws:/workspace" -w /workspace hashicorp/terraform:1.14.0 "$@"; }
+case "${1:-help}" in
+  up) init; local_compose build api web; local_compose up -d --wait web; echo '준비 완료: http://localhost:3000 (로컬 계정 demo-a / demo-pass-2026 또는 demo-b / demo-pass-2026)' ;;
+  down) init; local_compose down ;;
+  logs) init; local_compose logs --tail=100 -f web api ;;
+  doctor) need_docker; docker compose version; echo 'Docker 준비됨. ./dev up 으로 자동 설정·실행합니다.' ;;
+  verify)
+    if [ "${2:-}" = --host ]; then node_task scripts/verify.mjs; else tools node scripts/verify.mjs; fi
+    bash ./dev demo
+    bash ./dev infra-check
+    node_task scripts/record.mjs complete
+    ;;
+  defect-demo) tools node scripts/defect-demo.mjs ;;
+  skill-check) node_task scripts/skill-check.mjs ;;
+  skills-install) node_task scripts/skills-install.mjs "${@:2}" ;;
+  mcp-check) node_task scripts/mcp-check.mjs ;;
+  status) node_task scripts/record.mjs status ;;
+  agent-stop-check)
+    export STUDY_SOURCE_CHANGED="$(git status --porcelain --untracked-files=normal | wc -l | tr -d ' ')"
+    node_task scripts/agent-stop-check.mjs ;;
+  infra-check)
+    terraform_task init -backend=false -input=false -no-color
+    terraform_task fmt -check -no-color
+    terraform_task validate -no-color
+    node_task scripts/record.mjs infra
+    ;;
+  aws-configure) node_task scripts/aws/configure.mjs ;;
+  demo)
+    init
+    mkdir -p .local/e2e
+    node_task scripts/record.mjs start-e2e
+    export APP_ORIGIN=http://web:3000 OIDC_PUBLIC_URL=http://identity:8080
+    STUDY_CHECK_PROJECT="${STUDY_PROJECT_NAME}-demo"
+    check_compose(){ docker compose -p "$STUDY_CHECK_PROJECT" --env-file .local/runtime.env -f compose.yaml --profile e2e "$@"; }
+    trap 'result=$?; if [ "$result" != 0 ]; then check_compose logs --tail=40 postgres api web >&2; fi; check_compose down --volumes --remove-orphans >/dev/null 2>&1' EXIT
+    check_compose build api web
+    check_compose up -d --wait web
+    check_compose run --build --rm --no-deps e2e
+    node_task scripts/record.mjs finish-e2e
+    echo '브라우저 시연 결과: .local/e2e/'
+    ;;
+  reset-demo)
+    [ "${2:-}" = --yes ] || { echo '이 저장소의 로컬 DB·로그인 데이터를 지우려면 ./dev reset-demo --yes 를 실행하세요.'; exit 1; }
+    init; local_compose down --volumes; echo '로컬 예제 데이터를 지웠습니다. ./dev up 으로 다시 시작하세요.' ;;
+  *) echo '사용법: ./dev up | doctor | verify [--host] | demo | defect-demo | skill-check | skills-install | mcp-check | infra-check | status | aws-configure | logs | down | reset-demo --yes' ;;
+esac

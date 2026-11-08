@@ -1,0 +1,48 @@
+{
+  "checkedAt": "2026-11-07T20:21:39.042Z",
+  "sourceDigest": "c968789c9383a095ae230426ac804bcdf4c283f957858ebb5801434dadcac24c",
+  "command": "./dev verify",
+  "status": "passed",
+  "tests": {
+    "api": 21,
+    "web": 32,
+    "harnessAndReleasePolicy": 7,
+    "browserScenarios": 2
+  },
+  "counterexample": "Expected capacity assertion rejected 9 registrations for capacity 8; production API unchanged",
+  "infrastructure": "Terraform init -backend=false, fmt -check, validate passed",
+  "additionalChecks": [
+    "./dev skill-check",
+    "./dev mcp-check"
+  ],
+  "notExecuted": [
+    "AWS plan/apply or deployment",
+    "GitHub publishing and remote Actions run",
+    "Current Codex/Claude host skill/hook trust activation",
+    "Real AWS Console/CLI authentication or STS identity call"
+  ],
+  "liveLocalSmoke": "localhost:3000 real OIDC login and authenticated session list passed; no registration submitted",
+  "presentationGuide": {
+    "slides": 48,
+    "coreSlides": 42,
+    "additionalAwsSlides": 6,
+    "coreStages": 8,
+    "optionalStage": "I",
+    "coreMinutes": [
+      60,
+      75
+    ],
+    "additionalMinutes": 20,
+    "fileAndAnchorChecks": 48,
+    "guide": "docs/presenter-guide.md",
+    "awsGuide": "docs/aws-login.md"
+  },
+  "awsPracticalStatus": {
+    "localAppAndTests": "passed",
+    "terraformStaticChecks": "passed",
+    "realAwsLogin": false,
+    "accountPlan": false,
+    "applyOrPushOrDeployment": false,
+    "awsResourceCreationByThisWork": false
+  }
+}

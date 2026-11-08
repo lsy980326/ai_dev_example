@@ -1,0 +1,8 @@
+{
+  "repository": "https://github.com/anthropics/skills",
+  "revision": "2c5958ecac7cee2b583967a2c4981d0f4a75c579",
+  "files": {
+    "SKILL.md": "d91970639e9f5c37682ac7ab60094d35f1c7c1f38d731bd56396563aee10c1d3",
+    "LICENSE.txt": "0d542e0c8804e39aa7f37eb00da5a762149dc682d7829451287e11b938e94594"
+  }
+}

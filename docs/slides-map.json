@@ -1,0 +1,872 @@
+[
+  {
+    "slide": 1,
+    "key": "cover",
+    "stage": "A",
+    "primaryFile": "README.md",
+    "anchor": "다음 모임",
+    "focus": "완성된 예약 서비스를 설명하며 설계·검증·배포의 연결을 따라간다.",
+    "command": "",
+    "expected": "정원 8명·현재 7명인 같은 세션을 끝까지 사용한다.",
+    "mode": "reference",
+    "files": [
+      "README.md"
+    ],
+    "depth": "역할과 결과를 읽기",
+    "title": "다음 모임 저장소 코드 투어"
+  },
+  {
+    "slide": 2,
+    "key": "tour",
+    "stage": "A",
+    "primaryFile": "docs/presenter-guide.md",
+    "anchor": "8단계 진행표",
+    "focus": "발표 순서와 코드로 전환할 지점을 먼저 잡는다.",
+    "command": "",
+    "expected": "화면→정책→AI→핵심 코드→검사→AWS→릴리즈→이해 확인",
+    "mode": "reference",
+    "files": [
+      "docs/presenter-guide.md"
+    ],
+    "depth": "역할과 결과를 읽기",
+    "title": "8단계 발표와 화면 전환"
+  },
+  {
+    "slide": 3,
+    "key": "depth",
+    "stage": "A",
+    "primaryFile": "api/src/main/java/dev/study/booking/RegistrationService.java",
+    "anchor": "join(",
+    "focus": "문법 암기보다 규칙·경계·증거·권한을 설명한다.",
+    "command": "",
+    "expected": "같은 사람의 재시도와 두 사람의 경쟁을 구분해 말한다.",
+    "mode": "reference",
+    "files": [
+      "api/src/main/java/dev/study/booking/RegistrationService.java",
+      "docs/registration.md"
+    ],
+    "depth": "역할과 결과를 읽기",
+    "title": "직접 설명할 코드와 찾아볼 코드"
+  },
+  {
+    "slide": 4,
+    "key": "quickstart",
+    "stage": "A",
+    "primaryFile": "README.md",
+    "anchor": "Docker만 준비",
+    "focus": "준비는 발표 전에 끝내고 현장에서는 상태를 확인한다.",
+    "command": "./dev status",
+    "expected": "passed와 현재 sourceDigest 일치를 확인한다. 없거나 stale이면 새 성공으로 말하지 않는다.",
+    "mode": "live",
+    "files": [
+      "README.md",
+      "dev"
+    ],
+    "depth": "역할과 결과를 읽기",
+    "title": "발표 전 준비와 현장 확인"
+  },
+  {
+    "slide": 5,
+    "key": "webStates",
+    "stage": "A",
+    "primaryFile": "web/src/components/study-board.tsx",
+    "anchor": "async function register(",
+    "focus": "성공·정원 초과·응답 유실을 화면 결과로 비교한다.",
+    "command": "",
+    "expected": "신규 확정·같은 신청 재확인·연결 유실 후 재시도의 다른 상태",
+    "mode": "reference",
+    "files": [
+      "web/src/components/study-board.tsx",
+      "web/e2e/reservation.spec.ts"
+    ],
+    "depth": "역할과 결과를 읽기",
+    "title": "실행 화면에서 신청 결과 확인"
+  },
+  {
+    "slide": 6,
+    "key": "tiers",
+    "stage": "B",
+    "primaryFile": "compose.yaml",
+    "anchor": "services:",
+    "focus": "실행 프로세스와 3티어의 책임 경계를 연결한다.",
+    "command": "",
+    "expected": "Next=웹/세션/BFF, Spring=공통 규칙, PostgreSQL=신청 결과",
+    "mode": "reference",
+    "files": [
+      "compose.yaml",
+      "api/src/main/java/dev/study/booking/RegistrationService.java"
+    ],
+    "depth": "역할과 결과를 읽기",
+    "title": "이 서비스의 고정 3티어"
+  },
+  {
+    "slide": 7,
+    "key": "request",
+    "stage": "B",
+    "primaryFile": "web/src/app/api/sessions/[id]/registrations/route.ts",
+    "anchor": "export async function POST",
+    "focus": "브라우저→BFF→Spring→DB의 요청을 추적한다.",
+    "command": "",
+    "expected": "같은 Spring API를 웹과 모바일이 공유하며 Spring만 DB를 변경한다.",
+    "mode": "reference",
+    "files": [
+      "web/src/app/api/sessions/[id]/registrations/route.ts",
+      "api/src/main/java/dev/study/booking/StudyController.java"
+    ],
+    "depth": "역할과 결과를 읽기",
+    "title": "참가 신청 한 번의 요청 경로"
+  },
+  {
+    "slide": 8,
+    "key": "race",
+    "stage": "B",
+    "primaryFile": "api/src/test/java/dev/study/RegistrationIntegrationTest.java",
+    "anchor": "confirmsOnlyOneMemberForTheLastSeat",
+    "focus": "마지막 한 자리의 기대 결과를 먼저 고정한다.",
+    "command": "",
+    "expected": "서로 다른 회원의 응답은 201·409, DB 최종 8명",
+    "mode": "reference",
+    "files": [
+      "api/src/test/java/dev/study/RegistrationIntegrationTest.java",
+      "docs/registration.md"
+    ],
+    "depth": "역할과 결과를 읽기",
+    "title": "마지막 한 자리의 동시 신청"
+  },
+  {
+    "slide": 9,
+    "key": "interview",
+    "stage": "B",
+    "primaryFile": "docs/registration.md",
+    "anchor": "첫 버전의 정책",
+    "focus": "기존 정책을 대화로 재연한다. 완성본을 AI에게 다시 설계시키지 않는다.",
+    "command": "",
+    "expected": "정원·기존 신청·마감·본인 식별에 대한 합의",
+    "mode": "live",
+    "files": [
+      "docs/registration.md",
+      "docs/ai-workflow.md"
+    ],
+    "depth": "판단을 설명",
+    "title": "구현 전에 합의할 신청 정책"
+  },
+  {
+    "slide": 10,
+    "key": "acceptance",
+    "stage": "B",
+    "primaryFile": "docs/registration.md",
+    "anchor": "확인할 증거",
+    "focus": "정책의 답을 관찰 가능한 결과로 바꾼다.",
+    "command": "",
+    "expected": "다른 회원 201/409, 같은 회원 200/201과 같은 ID, 마감 신규 409",
+    "mode": "reference",
+    "files": [
+      "docs/registration.md",
+      "api/src/test/java/dev/study/RegistrationIntegrationTest.java"
+    ],
+    "depth": "판단을 설명",
+    "title": "인터뷰 답변을 완료 기준으로 고정"
+  },
+  {
+    "slide": 11,
+    "key": "trace",
+    "stage": "B",
+    "primaryFile": "docs/ai-workflow.md",
+    "anchor": "대화를 실행 가능한 계약으로",
+    "focus": "인터뷰의 답과 명세·테스트를 나란히 연결한다.",
+    "command": "",
+    "expected": "마감 후 재시도 허용 정책이 기존 신청 우선 조회와 검사로 이어진다.",
+    "mode": "reference",
+    "files": [
+      "docs/ai-workflow.md",
+      "api/src/test/java/dev/study/RegistrationIntegrationTest.java"
+    ],
+    "depth": "역할과 결과를 읽기",
+    "title": "인터뷰가 명세 파일과 테스트로 바뀌는 과정"
+  },
+  {
+    "slide": 12,
+    "key": "schema",
+    "stage": "B",
+    "primaryFile": "api/src/main/resources/db/migration/V1__study_and_registration.sql",
+    "anchor": "registration_session_member_unique",
+    "focus": "UNIQUE가 보장하는 것과 잠금으로 보장하는 것을 구분한다.",
+    "command": "",
+    "expected": "UNIQUE=회원 중복 방지, 행 잠금+정원 계산=정원 초과 방지",
+    "mode": "reference",
+    "files": [
+      "api/src/main/resources/db/migration/V1__study_and_registration.sql",
+      "api/src/main/java/dev/study/booking/StudyRepository.java"
+    ],
+    "depth": "역할과 결과를 읽기",
+    "title": "신청 데이터와 DB 제약"
+  },
+  {
+    "slide": 13,
+    "key": "contract",
+    "stage": "B",
+    "primaryFile": "api/src/main/java/dev/study/booking/StudyController.java",
+    "anchor": "join(",
+    "focus": "API 상태와 서버가 결정하는 신원을 연결한다.",
+    "command": "",
+    "expected": "신규 201·기존 200·정원/마감 409, memberSubject는 JWT sub",
+    "mode": "reference",
+    "files": [
+      "api/src/main/java/dev/study/booking/StudyController.java",
+      "docs/registration.md"
+    ],
+    "depth": "역할과 결과를 읽기",
+    "title": "웹과 모바일이 공유할 API 계약"
+  },
+  {
+    "slide": 14,
+    "key": "auth",
+    "stage": "B",
+    "primaryFile": "web/src/app/api/sessions/[id]/registrations/route.ts",
+    "anchor": "export async function POST",
+    "focus": "Origin/JSON→서버 세션→빈 body→Bearer 전달만 읽는다.",
+    "command": "",
+    "expected": "회원 ID를 body로 받지 않고 access token을 브라우저 session에 노출하지 않는다.",
+    "mode": "live",
+    "files": [
+      "web/src/app/api/sessions/[id]/registrations/route.ts",
+      "web/src/lib/auth.ts"
+    ],
+    "depth": "판단을 설명",
+    "title": "Next와 Spring의 인증·업무 경계"
+  },
+  {
+    "slide": 15,
+    "key": "owner",
+    "stage": "C",
+    "primaryFile": "docs/ai-workflow.md",
+    "anchor": "AI와 함께 바꾸는 순서",
+    "focus": "개발자가 제품 결정과 완료 판단을 맡는다.",
+    "command": "",
+    "expected": "질문·범위·완료 기준·검사 결과를 개발자가 소유한다.",
+    "mode": "reference",
+    "files": [
+      "docs/ai-workflow.md",
+      "AGENTS.md"
+    ],
+    "depth": "역할과 결과를 읽기",
+    "title": "AI 시대 개발자의 제품 판단"
+  },
+  {
+    "slide": 16,
+    "key": "stack",
+    "stage": "C",
+    "primaryFile": "web/package.json",
+    "anchor": "\"next\"",
+    "focus": "언어·프레임워크는 팀과 경계에 맞춰 선택한다.",
+    "command": "",
+    "expected": "웹/BFF는 TypeScript+Next, 공통 API는 Java+Spring Boot, 저장은 PostgreSQL",
+    "mode": "reference",
+    "files": [
+      "web/package.json",
+      "api/build.gradle"
+    ],
+    "depth": "역할과 결과를 읽기",
+    "title": "이 프로젝트의 언어와 프레임워크"
+  },
+  {
+    "slide": 17,
+    "key": "harness",
+    "stage": "C",
+    "primaryFile": "scripts/lib/stop-policy.mjs",
+    "anchor": "stopDecision",
+    "focus": "지침·실행·검사·완료의 루프를 연결한다.",
+    "command": "",
+    "expected": "미검증 변경의 첫 Stop을 막고, 변경이 없거나 반복 Stop이면 허용한다. CI나 샌드박스를 대신하지 않는다.",
+    "mode": "reference",
+    "files": [
+      "scripts/lib/stop-policy.mjs",
+      "scripts/verify.mjs"
+    ],
+    "depth": "역할과 결과를 읽기",
+    "title": "하네스가 만드는 작업과 검증의 루프"
+  },
+  {
+    "slide": 18,
+    "key": "skillsMcp",
+    "stage": "C",
+    "primaryFile": ".codex/config.toml",
+    "anchor": "[mcp_servers.openaiDeveloperDocs]",
+    "focus": "Skill=절차, MCP=도구 연결, 검사=실행 증거를 구분한다.",
+    "command": "",
+    "expected": "설정 파일이 있다고 현재 채팅에서 활성화된 것은 아니다.",
+    "mode": "reference",
+    "files": [
+      ".codex/config.toml",
+      ".agents/skills/registration-review/SKILL.md",
+      ".mcp.json"
+    ],
+    "depth": "역할과 결과를 읽기",
+    "title": "Skill·MCP·검사가 붙는 위치"
+  },
+  {
+    "slide": 19,
+    "key": "prompt",
+    "stage": "C",
+    "primaryFile": "docs/ai-workflow.md",
+    "anchor": "범위를 좁혀 구현하고 따로 리뷰한다",
+    "focus": "완성본에서는 읽기 전용 설명 요청을 시연한다. 신규 변경은 명세/테스트부터 요청한다.",
+    "command": "",
+    "expected": "AI 요청에 목표·변경 범위·불변식·실행할 검사·권한 제한을 포함한다.",
+    "mode": "live",
+    "files": [
+      "docs/ai-workflow.md",
+      "AGENTS.md"
+    ],
+    "depth": "역할과 결과를 읽기",
+    "title": "완성본을 설명하는 AI 요청"
+  },
+  {
+    "slide": 20,
+    "key": "review",
+    "stage": "C",
+    "primaryFile": "scripts/verify.mjs",
+    "anchor": "function run(",
+    "focus": "AI의 완료 문구와 실제 실행 결과를 따로 본다.",
+    "command": "",
+    "expected": "diff·정책·테스트 결과를 비교하고 실패를 숨기지 않는다.",
+    "mode": "reference",
+    "files": [
+      "scripts/verify.mjs",
+      "docs/verification.md"
+    ],
+    "depth": "역할과 결과를 읽기",
+    "title": "구현 납품은 diff와 실행 결과로 받기"
+  },
+  {
+    "slide": 21,
+    "key": "skillSupply",
+    "stage": "C",
+    "primaryFile": ".agents/skills/registration-review/SKILL.md",
+    "anchor": "Reservation review",
+    "focus": "이 저장소의 업무 리뷰 절차를 읽는다.",
+    "command": "./dev skill-check",
+    "expected": "스킬 본문에서 정원·재시도·인증·DB 권한의 리뷰 항목을 읽고, 명령은 사본·출처 해시·설정 형식을 검사한다.",
+    "mode": "live",
+    "files": [
+      ".agents/skills/registration-review/SKILL.md",
+      ".agents/skills/frontend-design/source.json"
+    ],
+    "depth": "역할과 결과를 읽기",
+    "title": "저장소의 스킬 적용과 확인"
+  },
+  {
+    "slide": 22,
+    "key": "agentSetup",
+    "stage": "C",
+    "primaryFile": ".codex/hooks.json",
+    "anchor": "\"Stop\"",
+    "focus": "호스트별 스킬/훅/MCP 설정을 연결한다.",
+    "command": "./dev mcp-check",
+    "expected": "공개 문서 endpoint initialize 성공과 호스트의 /skills·/hooks·/mcp 활성 확인은 별개다.",
+    "mode": "reference",
+    "files": [
+      ".codex/hooks.json",
+      ".claude/settings.json",
+      ".codex/config.toml",
+      ".mcp.json"
+    ],
+    "depth": "역할과 결과를 읽기",
+    "title": "Skill·MCP·하네스의 적용 위치"
+  },
+  {
+    "slide": 23,
+    "key": "repoMap",
+    "stage": "D",
+    "primaryFile": "docs/slides-map.json",
+    "anchor": "\"primaryFile\"",
+    "focus": "같은 요청을 담당하는 파일 몇 개만 읽는다.",
+    "command": "",
+    "expected": "화면 register()·BFF POST()·서비스 join()·SQL·테스트의 역할을 가리킨다.",
+    "mode": "reference",
+    "files": [
+      "docs/slides-map.json",
+      "web/src/components/study-board.tsx",
+      "web/src/app/api/sessions/[id]/registrations/route.ts",
+      "api/src/main/java/dev/study/booking/RegistrationService.java"
+    ],
+    "depth": "역할과 결과를 읽기",
+    "title": "슬라이드의 개념을 코드에서 찾기"
+  },
+  {
+    "slide": 24,
+    "key": "transaction",
+    "stage": "D",
+    "primaryFile": "api/src/main/java/dev/study/booking/RegistrationService.java",
+    "anchor": "join(",
+    "focus": "메서드의 판단 순서를 문장으로 읽는다.",
+    "command": "",
+    "expected": "잠금→기존 신청→잠금 후 Clock→마감→정원→INSERT",
+    "mode": "live",
+    "files": [
+      "api/src/main/java/dev/study/booking/RegistrationService.java",
+      "api/src/main/java/dev/study/booking/StudyRepository.java"
+    ],
+    "depth": "판단을 설명",
+    "title": "Spring의 신청 트랜잭션"
+  },
+  {
+    "slide": 25,
+    "key": "timeline",
+    "stage": "D",
+    "primaryFile": "api/src/main/java/dev/study/booking/StudyRepository.java",
+    "anchor": "lockSession(",
+    "focus": "FOR UPDATE 한 줄을 두 요청의 시간선과 연결한다.",
+    "command": "",
+    "expected": "뒤 요청은 앞 요청 커밋 뒤 정원을 다시 보고 신규 신청을 거절한다.",
+    "mode": "live",
+    "files": [
+      "api/src/main/java/dev/study/booking/StudyRepository.java",
+      "api/src/main/java/dev/study/booking/RegistrationService.java"
+    ],
+    "depth": "판단을 설명",
+    "title": "PostgreSQL이 두 신청을 순서대로 확정"
+  },
+  {
+    "slide": 26,
+    "key": "testCode",
+    "stage": "E",
+    "primaryFile": "api/src/test/java/dev/study/RegistrationIntegrationTest.java",
+    "anchor": "confirmsOnlyOneMemberForTheLastSeat",
+    "focus": "준비/동시 요청/검증 중 마지막 기대값부터 읽는다.",
+    "command": "",
+    "expected": "201·409와 count=8; 같은 회원 재시도는 동일 registrationId",
+    "mode": "live",
+    "files": [
+      "api/src/test/java/dev/study/RegistrationIntegrationTest.java",
+      "api/src/test/java/dev/study/JwtPolicyTest.java",
+      "web/e2e/reservation.spec.ts"
+    ],
+    "depth": "판단을 설명",
+    "title": "정원·중복을 확인하는 테스트 코드"
+  },
+  {
+    "slide": 27,
+    "key": "testScope",
+    "stage": "E",
+    "primaryFile": "scripts/verify.mjs",
+    "anchor": "run(\"npm\"",
+    "focus": "단위·JWT 서명·실제 DB·브라우저가 각각 무엇을 증명하는지 구분한다.",
+    "command": "./dev status",
+    "expected": "전체 검사 상태와 현재 소스의 일치. 로컬 통과가 AWS 실제 배포 증거는 아니다.",
+    "mode": "reference",
+    "files": [
+      "scripts/verify.mjs",
+      "docs/verified-example.json",
+      "web/e2e/reservation.spec.ts"
+    ],
+    "depth": "역할과 결과를 읽기",
+    "title": "실행한 검사와 아직 검증하지 않은 범위"
+  },
+  {
+    "slide": 28,
+    "key": "mutation",
+    "stage": "E",
+    "primaryFile": "api/src/test/java/dev/study/UnsafeRaceExperiment.java",
+    "anchor": "unlockedReadThenInsertMustNotExceedCapacity",
+    "focus": "잠금 없는 별도 SQL 반례를 관찰한다.",
+    "command": "./dev defect-demo",
+    "expected": "두 트랜잭션이 7을 읽고 9명을 확정해 정원 assertion에 실패한다. 정상 API 코드는 변경하지 않는다.",
+    "mode": "live",
+    "files": [
+      "api/src/test/java/dev/study/UnsafeRaceExperiment.java",
+      "scripts/defect-demo.mjs"
+    ],
+    "depth": "역할과 결과를 읽기",
+    "title": "잠금 없는 SQL의 반례를 실행하기"
+  },
+  {
+    "slide": 29,
+    "key": "ci",
+    "stage": "E",
+    "primaryFile": ".github/workflows/verify.yml",
+    "anchor": "verification:",
+    "focus": "서버에서 같은 검사를 재실행하는 한 줄을 찾는다.",
+    "command": "",
+    "expected": "./dev verify 재실행; 잘못된 병합 차단에는 GitHub required check 설정도 필요",
+    "mode": "live",
+    "files": [
+      ".github/workflows/verify.yml",
+      "scripts/verify.mjs"
+    ],
+    "depth": "역할과 결과를 읽기",
+    "title": "필수 CI가 잘못된 구현의 병합을 막기"
+  },
+  {
+    "slide": 30,
+    "key": "awsMap",
+    "stage": "F",
+    "primaryFile": "infra/aws/ecs.tf",
+    "anchor": "resource \"aws_ecs_service\" \"app\"",
+    "focus": "로컬의 같은 책임을 AWS 배치로 옮긴다.",
+    "command": "",
+    "expected": "CloudFront/ALB→private Next·Spring→private RDS. 실제 apply는 미실행",
+    "mode": "reference",
+    "files": [
+      "infra/aws/ecs.tf",
+      "infra/aws/network.tf",
+      "infra/aws/data.tf"
+    ],
+    "depth": "역할과 결과를 읽기",
+    "title": "같은 3티어를 AWS에 배치"
+  },
+  {
+    "slide": 31,
+    "key": "ecrEcs",
+    "stage": "F",
+    "primaryFile": "infra/aws/data.tf",
+    "anchor": "resource \"aws_ecr_repository\" \"app\"",
+    "focus": "ECR 이미지 저장과 ECS/Fargate 실행을 분리한다.",
+    "command": "",
+    "expected": "ECR push만으로 서비스가 교체되지 않는다. 배포는 digest로 실행",
+    "mode": "reference",
+    "files": [
+      "infra/aws/data.tf",
+      "infra/aws/ecs.tf",
+      "scripts/aws/push-images.mjs"
+    ],
+    "depth": "역할과 결과를 읽기",
+    "title": "ECR·ECS·Fargate의 역할"
+  },
+  {
+    "slide": 32,
+    "key": "bootstrap",
+    "stage": "F",
+    "primaryFile": "infra/aws/data.tf",
+    "anchor": "resource \"aws_secretsmanager_secret\" \"app\"",
+    "focus": "foundation은 리소스와 Secret 자리만 만들고 앱은 준비 후 실행한다.",
+    "command": "./dev infra-check",
+    "expected": "init·fmt·validate만 실행하며 AWS plan/apply는 하지 않는다.",
+    "mode": "reference",
+    "files": [
+      "infra/aws/data.tf",
+      "infra/aws/ecs.tf",
+      "api/src/main/java/dev/study/jobs/DatabaseJobs.java"
+    ],
+    "depth": "역할과 결과를 읽기",
+    "title": "인프라 코드와 DB 역할의 초기 구성"
+  },
+  {
+    "slide": 33,
+    "key": "iam",
+    "stage": "F",
+    "primaryFile": "infra/aws/iam.tf",
+    "anchor": "secret_permissions",
+    "focus": "역할별로 읽을 Secret과 실행할 작업의 차이를 비교한다.",
+    "command": "",
+    "expected": "GitHub 반복 배포 role은 master bootstrap 역할을 넘겨받지 못한다. DB 권한과 IAM은 별개",
+    "mode": "live",
+    "files": [
+      "infra/aws/iam.tf",
+      "infra/aws/ecs.tf",
+      "api/src/main/resources/db/migration/V1__study_and_registration.sql"
+    ],
+    "depth": "판단을 설명",
+    "title": "IAM은 누가 무엇을 할 수 있는가"
+  },
+  {
+    "slide": 34,
+    "key": "images",
+    "stage": "F",
+    "primaryFile": "web/Dockerfile",
+    "anchor": "FROM",
+    "focus": "빌드 산출물과 실행 시 주입 설정을 구분한다.",
+    "command": "",
+    "expected": "web/api 이미지 두 개, production Secret은 이미지나 Git에 넣지 않는다.",
+    "mode": "reference",
+    "files": [
+      "web/Dockerfile",
+      "api/Dockerfile",
+      "infra/aws/ecs.tf"
+    ],
+    "depth": "역할과 결과를 읽기",
+    "title": "두 이미지와 환경 설정"
+  },
+  {
+    "slide": 35,
+    "key": "migration",
+    "stage": "F",
+    "primaryFile": "scripts/aws/deploy.mjs",
+    "anchor": "const job",
+    "focus": "최초 bootstrap과 반복 migration을 구분해 배포 순서를 읽는다.",
+    "command": "",
+    "expected": "최초 운영자 bootstrap 별도→migration exit 0→API→Next→health/조회 확인",
+    "mode": "reference",
+    "files": [
+      "scripts/aws/deploy.mjs",
+      "api/src/main/java/dev/study/jobs/DatabaseJobs.java",
+      "infra/aws/ecs.tf"
+    ],
+    "depth": "역할과 결과를 읽기",
+    "title": "Bootstrap·Migration Task와 서비스 배포 순서"
+  },
+  {
+    "slide": 36,
+    "key": "networkMap",
+    "stage": "F",
+    "primaryFile": "infra/aws/edge.tf",
+    "anchor": "resource \"aws_lb_listener_rule\" \"route\"",
+    "focus": "외부 웹과 모바일의 Host rule, 내부 BFF 요청 경로를 추적한다.",
+    "command": "",
+    "expected": "origin.<domain>→Next / api.<domain>→Spring / Next→study-api:8080",
+    "mode": "reference",
+    "files": [
+      "infra/aws/edge.tf",
+      "infra/aws/ecs.tf",
+      "infra/aws/network.tf"
+    ],
+    "depth": "역할과 결과를 읽기",
+    "title": "외부 요청과 내부 요청의 실제 경로"
+  },
+  {
+    "slide": 37,
+    "key": "cache",
+    "stage": "F",
+    "primaryFile": "infra/aws/edge.tf",
+    "anchor": "default_cache_behavior",
+    "focus": "기본 캐시 OFF와 해시 정적 파일 캐시만 읽는다.",
+    "command": "",
+    "expected": "인증·신청·개인 응답은 캐시하지 않고 /_next/static/*만 캐시한다.",
+    "mode": "reference",
+    "files": [
+      "infra/aws/edge.tf",
+      "web/src/lib/auth.ts"
+    ],
+    "depth": "역할과 결과를 읽기",
+    "title": "CloudFront·웹 세션·캐시 정책"
+  },
+  {
+    "slide": 38,
+    "key": "release",
+    "stage": "G",
+    "primaryFile": ".github/workflows/deploy.yml",
+    "anchor": "environment: production",
+    "focus": "운영 배포의 검증 선행·환경 게이트·이미지 재사용 옵션을 읽는다.",
+    "command": "",
+    "expected": "required reviewer/변수/필수 검사는 GitHub에서 별도 설정. 원격 실행은 미수행",
+    "mode": "live",
+    "files": [
+      ".github/workflows/deploy.yml",
+      "scripts/aws/deploy.mjs",
+      "docs/aws.md"
+    ],
+    "depth": "역할과 결과를 읽기",
+    "title": "수동 운영 배포와 추가할 검증 게이트"
+  },
+  {
+    "slide": 39,
+    "key": "rollback",
+    "stage": "G",
+    "primaryFile": "scripts/aws/deploy-policy.mjs",
+    "anchor": "deployedRevision",
+    "focus": "종료됨/안정됨과 기대 버전 성공을 구분한다.",
+    "command": "",
+    "expected": "migration 컨테이너 exit 0 + 기대 revision 일치. 코드 롤백이 DB migration을 되돌리지는 않음",
+    "mode": "reference",
+    "files": [
+      "scripts/aws/deploy-policy.mjs",
+      "scripts/aws/deploy.mjs",
+      "tests/deploy-policy.test.mjs"
+    ],
+    "depth": "역할과 결과를 읽기",
+    "title": "코드 롤백과 DB 변경 복구"
+  },
+  {
+    "slide": 40,
+    "key": "observe",
+    "stage": "G",
+    "primaryFile": "api/src/main/java/dev/study/RequestTraceFilter.java",
+    "anchor": "doFilterInternal",
+    "focus": "요청 경로·업무 거절·서버 오류를 다른 신호로 본다.",
+    "command": "",
+    "expected": "requestId·status·지연을 연결한다. 운영 지표·정원 경보는 추가 설계/실행 필요",
+    "mode": "reference",
+    "files": [
+      "api/src/main/java/dev/study/RequestTraceFilter.java",
+      "docs/aws.md"
+    ],
+    "depth": "역할과 결과를 읽기",
+    "title": "예약 성공을 기준으로 관측하기"
+  },
+  {
+    "slide": 41,
+    "key": "extension",
+    "stage": "H",
+    "primaryFile": "docs/registration.md",
+    "anchor": "첫 버전의 정책",
+    "focus": "새 요구가 생기면 정책과 책임을 먼저 확장한다.",
+    "command": "",
+    "expected": "취소·대기열·알림·AI 요약은 현재 구현 범위 밖이다.",
+    "mode": "reference",
+    "files": [
+      "docs/registration.md",
+      "docs/ai-workflow.md"
+    ],
+    "depth": "역할과 결과를 읽기",
+    "title": "새 요구가 생기면 필요한 구조를 더하기"
+  },
+  {
+    "slide": 42,
+    "key": "receipt",
+    "stage": "H",
+    "primaryFile": "scripts/record.mjs",
+    "anchor": "action === \"status\"",
+    "focus": "현재 소스의 실행 증거와 수업의 이해를 확인한다.",
+    "command": "./dev status",
+    "expected": "현재 hash 일치와 pass. 정책·경계·검사·권한을 자기 말로 설명한다.",
+    "mode": "live",
+    "files": [
+      "scripts/record.mjs",
+      "docs/verification.md"
+    ],
+    "depth": "판단을 설명",
+    "title": "실행 결과와 검증 영수증 확인"
+  },
+  {
+    "slide": 43,
+    "key": "practicalScope",
+    "title": "실습은 로컬까지, AWS는 코드와 정적 검사까지",
+    "stage": "I",
+    "primaryFile": "docs/aws-login.md",
+    "anchor": "실습의 현재 범위",
+    "focus": "지금 실행한 것과 준비만 한 것, 비용이 생길 확장 단계를 구분한다.",
+    "command": "",
+    "expected": "로컬 앱·검사 완료 / AWS 로그인·plan·apply·push·운영 배포 미실행",
+    "mode": "reference",
+    "files": [
+      "docs/aws-login.md"
+    ],
+    "depth": "역할·권한·실행 범위를 설명",
+    "refs": [
+      "https://developer.hashicorp.com/terraform/cli/commands/validate"
+    ],
+    "execution": "설명용 예시·AWS 명령 미실행",
+    "optional": true
+  },
+  {
+    "slide": 44,
+    "key": "manualVsContainer",
+    "title": "EC2 직접 운영 예시와 이 저장소의 배포 방식",
+    "stage": "I",
+    "primaryFile": "docs/aws-login.md",
+    "anchor": "EC2에서 직접 배포하는 방식",
+    "focus": "서버 파일·프로세스 교체와 코드 검사 뒤 이미지·Task 교체를 같은 서비스로 비교한다.",
+    "command": "",
+    "expected": "EC2는 현재도 유효하다. 이 예제는 산출물·실행 설정·판정을 코드로 남기는 선택",
+    "mode": "reference",
+    "files": [
+      "docs/aws-login.md"
+    ],
+    "depth": "역할·권한·실행 범위를 설명",
+    "refs": [
+      "https://docs.aws.amazon.com/AmazonECS/latest/developerguide/ecs-configuration.html",
+      "https://docs.aws.amazon.com/wellarchitected/latest/framework/rel_tracking_change_management_immutable_infrastructure.html"
+    ],
+    "execution": "설명용 예시·AWS 명령 미실행",
+    "optional": true
+  },
+  {
+    "slide": 45,
+    "key": "humanAwsLogin",
+    "title": "개발자의 AWS 로그인과 임시 자격",
+    "stage": "I",
+    "primaryFile": "docs/aws-login.md",
+    "anchor": "운영자 로그인",
+    "focus": "기존 Console 기반 aws login과 조직 IAM Identity Center 경로를 구분한다.",
+    "command": "",
+    "expected": "profile은 신원·Region·인증 경로 선택이며 로그인만으로 배포 권한이 늘지 않음",
+    "mode": "reference",
+    "files": [
+      "docs/aws-login.md"
+    ],
+    "depth": "역할·권한·실행 범위를 설명",
+    "refs": [
+      "https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-sign-in.html",
+      "https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-sso.html",
+      "https://docs.aws.amazon.com/IAM/latest/UserGuide/root-user-best-practices.html"
+    ],
+    "execution": "설명용 예시·AWS 명령 미실행",
+    "optional": true
+  },
+  {
+    "slide": 46,
+    "key": "awsLoginCommands",
+    "title": "profile로 로그인하고 사용할 신원을 확인",
+    "stage": "I",
+    "primaryFile": "docs/aws-login.md",
+    "anchor": "명령을 읽는 순서",
+    "focus": "두 경로 중 하나를 선택하고 Account·Arn을 확인한다. 아래 명령은 미실행 예시다.",
+    "command": "",
+    "expected": "get-caller-identity는 신원 확인이며 Terraform apply·ECR push 권한 증거가 아님",
+    "mode": "reference",
+    "files": [
+      "docs/aws-login.md"
+    ],
+    "depth": "역할·권한·실행 범위를 설명",
+    "refs": [
+      "https://docs.aws.amazon.com/cli/latest/reference/login/",
+      "https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-sso.html",
+      "https://docs.aws.amazon.com/cli/latest/reference/sts/get-caller-identity.html",
+      "https://docs.aws.amazon.com/sdkref/latest/guide/feature-login-credentials.html"
+    ],
+    "execution": "설명용 예시·AWS 명령 미실행",
+    "optional": true
+  },
+  {
+    "slide": 47,
+    "key": "ciAwsIdentity",
+    "title": "GitHub 배포는 OIDC로 AWS 역할을 맡기",
+    "stage": "I",
+    "primaryFile": ".github/workflows/deploy.yml",
+    "anchor": "id-token: write",
+    "focus": "사람의 로그인 대신 GitHub 토큰을 제한된 deploy role의 임시 자격으로 교환한다.",
+    "command": "",
+    "expected": "trust=누가 맡는가 / permissions=맡은 뒤 무엇을 하는가. 원격 설정·배포는 미실행",
+    "mode": "reference",
+    "files": [
+      ".github/workflows/deploy.yml",
+      "infra/aws/iam.tf",
+      "docs/aws-login.md"
+    ],
+    "depth": "역할·권한·실행 범위를 설명",
+    "refs": [
+      "https://docs.aws.amazon.com/IAM/latest/UserGuide/id_roles_create_for-idp_oidc.html#idp_oidc_Create_GitHub"
+    ],
+    "execution": "설명용 예시·AWS 명령 미실행",
+    "optional": true
+  },
+  {
+    "slide": 48,
+    "key": "costBoundaries",
+    "title": "apply부터 자원 수명과 유지 비용을 관리",
+    "stage": "I",
+    "primaryFile": "infra/aws/network.tf",
+    "anchor": "resource \"aws_nat_gateway\"",
+    "focus": "로그인·계획과 자원 생성·실행을 구분하고, 종료 뒤 남는 자원도 확인한다.",
+    "command": "",
+    "expected": "초기 Task 수 0이어도 NAT·ALB·RDS·공인 IPv4 비용 가능. 로그아웃은 자원 종료가 아님",
+    "mode": "reference",
+    "files": [
+      "infra/aws/network.tf",
+      "infra/aws/data.tf",
+      "infra/aws/ecs.tf",
+      "docs/aws-login.md"
+    ],
+    "depth": "역할·권한·실행 범위를 설명",
+    "refs": [
+      "https://developer.hashicorp.com/terraform/cli/commands/plan",
+      "https://developer.hashicorp.com/terraform/cli/commands/apply",
+      "https://aws.amazon.com/vpc/pricing/",
+      "https://aws.amazon.com/elasticloadbalancing/pricing/",
+      "https://aws.amazon.com/fargate/pricing/",
+      "https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/USER_StopInstance.html"
+    ],
+    "execution": "설명용 예시·AWS 명령 미실행",
+    "optional": true
+  }
+]

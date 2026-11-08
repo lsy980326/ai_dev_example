@@ -1,0 +1,11 @@
+region = "ap-northeast-2"
+name = "study"
+zone_id = "Z_REPLACE_WITH_OWN_ROUTE53_ZONE"
+domain = "study.example.com"
+oidc_issuer = "https://identity.example.com/realms/study"
+oidc_discovery_url = "https://identity.example.com/realms/study/.well-known/openid-configuration"
+oidc_jwks_uri = "https://identity.example.com/realms/study/protocol/openid-connect/certs"
+oidc_client_id = "study-web"
+github_oidc_provider_arn = "arn:aws:iam::123456789012:oidc-provider/token.actions.githubusercontent.com"
+# Obtain the exact sub for YOUR repository; newer repositories use immutable IDs.
+github_oidc_subject = "repo:OWNER@OWNER_ID/REPO@REPO_ID:environment:production"

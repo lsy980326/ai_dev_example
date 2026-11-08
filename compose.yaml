@@ -1,0 +1,142 @@
+x-api: &api
+  image: ${STUDY_PROJECT_NAME:-study-example}-api:local
+  pull_policy: never
+  security_opt: [no-new-privileges:true]
+  cap_drop: [ALL]
+
+services:
+  postgres:
+    image: postgres:17.9-alpine
+    environment:
+      POSTGRES_DB: study
+      POSTGRES_USER: study_owner
+      POSTGRES_PASSWORD: ${OWNER_DB_PASSWORD:?Run ./dev up}
+    volumes: [postgres-data:/var/lib/postgresql/data]
+    healthcheck:
+      {
+        test: [CMD-SHELL, "pg_isready -U study_owner -d study"],
+        interval: 3s,
+        timeout: 3s,
+        retries: 30,
+      }
+  bootstrap:
+    <<: *api
+    command: [--spring.profiles.active=bootstrap]
+    environment:
+      DATABASE_URL: jdbc:postgresql://postgres:5432/study
+      DATABASE_USER: study_owner
+      DATABASE_PASSWORD: ${OWNER_DB_PASSWORD}
+      MIGRATOR_PASSWORD: ${MIGRATOR_DB_PASSWORD}
+      APP_DB_PASSWORD: ${APP_DB_PASSWORD}
+    depends_on: { postgres: { condition: service_healthy } }
+  migration:
+    <<: *api
+    command: ["--spring.profiles.active=migration,local"]
+    environment:
+      APP_MODE: local
+      DATABASE_URL: jdbc:postgresql://postgres:5432/study
+      DATABASE_USER: study_migrator
+      DATABASE_PASSWORD: ${MIGRATOR_DB_PASSWORD}
+    depends_on: { bootstrap: { condition: service_completed_successfully } }
+  identity:
+    image: quay.io/keycloak/keycloak:26.8.2
+    command: [start-dev, --import-realm]
+    environment:
+      KC_HOSTNAME: ${OIDC_PUBLIC_URL:-http://localhost:18080}
+      KC_HOSTNAME_BACKCHANNEL_DYNAMIC: "true"
+      KC_HEALTH_ENABLED: "true"
+      KC_HTTP_ENABLED: "true"
+      STUDY_WEB_ORIGIN: ${APP_ORIGIN:-http://localhost:3000}
+      OIDC_CLIENT_SECRET: ${OIDC_CLIENT_SECRET}
+    volumes:
+      - ./infra/local/study-realm.json:/opt/keycloak/data/import/study-realm.json:ro
+      - identity-data:/opt/keycloak/data
+    healthcheck:
+      test:
+        [
+          CMD-SHELL,
+          "bash -c '{ printf \"GET /health/ready HTTP/1.0\\r\\nHost: localhost\\r\\n\\r\\n\" >&3; grep -q \"200 OK\" <&3; } 3<>/dev/tcp/localhost/9000'",
+        ]
+      interval: 5s
+      timeout: 5s
+      retries: 50
+      start_period: 30s
+  api:
+    <<: *api
+    build: { context: ./api }
+    environment:
+      APP_MODE: local
+      DATABASE_URL: jdbc:postgresql://postgres:5432/study
+      DATABASE_USER: study_app
+      DATABASE_PASSWORD: ${APP_DB_PASSWORD}
+      OIDC_ISSUER: ${OIDC_PUBLIC_URL:-http://localhost:18080}/realms/study
+      OIDC_JWKS_URI: http://identity:8080/realms/study/protocol/openid-connect/certs
+    depends_on:
+      migration: { condition: service_completed_successfully }
+      identity: { condition: service_healthy }
+    healthcheck:
+      test:
+        [
+          CMD-SHELL,
+          "bash -c '{ printf \"GET /actuator/health HTTP/1.0\\r\\nHost: localhost\\r\\n\\r\\n\" >&3; grep -q \"200\" <&3; } 3<>/dev/tcp/localhost/8080'",
+        ]
+      interval: 5s
+      timeout: 5s
+      retries: 30
+  web:
+    image: ${STUDY_PROJECT_NAME:-study-example}-web:local
+    build: { context: ./web }
+    environment:
+      APP_MODE: local
+      APP_ORIGIN: ${APP_ORIGIN:-http://localhost:3000}
+      NEXTAUTH_URL: ${APP_ORIGIN:-http://localhost:3000}
+      NEXTAUTH_SECRET: ${NEXTAUTH_SECRET}
+      OIDC_ISSUER: ${OIDC_PUBLIC_URL:-http://localhost:18080}/realms/study
+      OIDC_DISCOVERY_URL: http://identity:8080/realms/study/.well-known/openid-configuration
+      OIDC_CLIENT_ID: study-web
+      OIDC_CLIENT_SECRET: ${OIDC_CLIENT_SECRET}
+      API_BASE_URL: http://api:8080
+    security_opt: [no-new-privileges:true]
+    cap_drop: [ALL]
+    depends_on: { api: { condition: service_healthy } }
+    healthcheck:
+      test:
+        [
+          CMD,
+          node,
+          -e,
+          "fetch('http://127.0.0.1:3000/api/health').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))",
+        ]
+      interval: 5s
+      timeout: 5s
+      retries: 30
+  tools:
+    profiles: [checks]
+    user: "${STUDY_UID:-1000}:${STUDY_GID:-1000}"
+    group_add: ["${STUDY_DOCKER_GID:-0}"]
+    build: { context: ., dockerfile: docker/tools.Dockerfile }
+    working_dir: /workspace
+    environment:
+      GRADLE_USER_HOME: /workspace/.local/gradle
+      npm_config_userconfig: /tmp/study-empty-npmrc
+      npm_config_cache: /workspace/.local/npm-container
+      TESTCONTAINERS_HOST_OVERRIDE: host.docker.internal
+      TESTCONTAINERS_DOCKER_SOCKET_OVERRIDE: /var/run/docker.sock
+      NEXT_TELEMETRY_DISABLED: "1"
+    extra_hosts: [host.docker.internal:host-gateway]
+    volumes:
+      - .:/workspace
+      - /var/run/docker.sock:/var/run/docker.sock
+  e2e:
+    profiles: [e2e]
+    user: "${STUDY_UID:-1000}:${STUDY_GID:-1000}"
+    build: { context: ., dockerfile: docker/e2e.Dockerfile }
+    environment:
+      E2E_BASE_URL: ${APP_ORIGIN:-http://web:3000}
+      E2E_OUTPUT: /reports
+    volumes: [./.local/e2e:/reports]
+    depends_on: { web: { condition: service_healthy } }
+
+volumes:
+  postgres-data:
+  identity-data:
